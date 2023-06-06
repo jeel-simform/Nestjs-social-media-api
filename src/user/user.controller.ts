@@ -16,8 +16,10 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 import { Request } from 'express';
+import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 
 @Controller()
+@ApiTags('User')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -30,20 +32,23 @@ export class UserController {
   login(@Body() loginUserDto: LoginUserDto) {
     return this.userService.login(loginUserDto);
   }
-  // @Get()
-  // findAll() {}
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {}
-
+  @ApiSecurity('JWT-auth')
   @UseGuards(AuthGuard)
-  @Patch()
+  @Get('profile')
+  getProfile(@Req() request: any) {
+    return this.userService.findById(request.user.id);
+  }
+
+  @ApiSecurity('JWT-auth')
+  @UseGuards(AuthGuard)
+  @Patch('update-me')
   update(@Body() updateUserDto: UpdateUserDto, @Req() request: any) {
     return this.userService.updateProfile(updateUserDto, request.user);
   }
 
+  @ApiSecurity('JWT-auth')
   @UseGuards(AuthGuard)
-  @Delete()
+  @Delete('delete-profile')
   remove(@Req() request: any) {
     return this.userService.deleteUser(request.user);
   }

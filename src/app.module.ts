@@ -38,7 +38,7 @@ import databaseConfig from './config/database.config';
 
     JwtModule.register({
       global: true,
-      secret: 'secret',
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '12000s' },
     }),
   ],
